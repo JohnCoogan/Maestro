@@ -15,18 +15,104 @@
         <script src="components/modernizr/modernizr.js"></script>
         <!-- endbuild -->
     </head>
-    <body>
+    <body ng-app ng-controller="noteCtrl">
+        <!-- build:js scripts/main.js -->
+        <script src="scripts/underscore.js"></script>
+        <script src="scripts/angular.js"></script>
+        <script src="scripts/vexflow.js"></script>
+        <script src="scripts/vexflow-json.js"></script>
+        <script src="scripts/main.js"></script>
+        <!-- endbuild -->
+
         <div class="container">
             <div class="hero-unit">
-                <h1>'Allo, 'Allo!</h1>
-                <p>You now have</p>
-                <ul>
-                    <li>HTML5 Boilerplate</li>
-                    <li>Twitter Bootstrap</li>
-                </ul>
-                <p>installed.</p>
-                <h3>Enjoy coding! - Yeoman</h3>
+              <h1>Maestro 1.0</h1>
             </div>
+
+          <h2>Simple Chord</h2>
+          <p>["C", "E", "G", "Bb"]</p>
+          <p>{{ customChord }}</p>
+          <canvas id="simple-chord" width="200" height="120"></canvas>
+          <input type="text" ng-model="customChord" placeholder='Sample ["C", "E", "G", "Bb"]' ng-change='redraw("simple-chord");'>
+          
+          <h2>Simple Chord with Duration</h2>
+          <canvas id="simple-chord-with-duration" width="600" height="120"></canvas>
+          <script type="text/javascript">
+            render_vexflow("simple-chord-with-duration", {
+              duration: "h",
+              keys: ["C", "E", "G", "Bb"]
+            });
+          </script>
+
+          <h2>Simple List of Notes</h2>
+          <canvas id="simple-list-of-notes" width="600" height="120"></canvas>
+          <script type="text/javascript">
+            render_vexflow("simple-list-of-notes", [["C"], ["D"], ["E"], ["F"], ["G"]]);
+          </script>
+
+          <h2>Simple Sequence of Chords</h2>
+          <canvas id="simple-sequence-of-chords" width="600" height="120"></canvas>
+          <script type="text/javascript">
+            render_vexflow("simple-sequence-of-chords", [
+              ["C", "Eb", "G", "Bb"],
+              ["C", "Eb", "F", "A"],
+              ["Bb", "D", "F", "A"],
+              "|",
+              ["C", "Eb", "G", "Bb"],
+              ["C", "Eb", "F", "A"],
+              ["Bb", "D", "F", "A"]
+            ]);
+          </script>
+
+          <h2>Explicit Sequence of Chords</h2>
+          <canvas id="explicit-sequence-of-chords" width="600" height="120"></canvas>
+          <script type="text/javascript">
+            render_vexflow("explicit-sequence-of-chords", {
+              clef: "treble",
+              notes: [
+                { duration: "q", keys: ["C", "Eb", "G", "Bb"] },
+                { duration: "q", keys: ["C", "Eb", "F", "A"] },
+                { duration: "h", keys: ["Bb", "D", "F", "A"] },
+                { duration: "h", keys: ["Bb", "D", "F", "A"] },
+              ]
+            });
+          </script>
+
+          <h2>Chord Across Treble &amp; Bass Clefs</h2>
+          <canvas id="chord-across-clefs" width="600" height="300"></canvas>
+          <script type="text/javascript">
+            render_vexflow("chord-across-clefs", {
+              clef: ["treble", "bass"],
+              duration: "h",
+              keys: ["C/3", "E/3", "G/4", "Bb/4"]
+            });
+          </script>
+
+          <h2>Explicit Voices</h2>
+          <canvas id="explicit-voices" width="900" height="300"></canvas>
+          <script type="text/javascript">
+            render_vexflow("explicit-voices", {
+              clef: "treble",
+              voices: [
+                { time: "4/4", notes: [
+                  { duration: "h", keys: ["C", "Eb", "F", "A"] },
+                  { duration: "h", keys: ["Bb", "D", "F", "A"] },
+                  { barnote: true },
+                  { duration: "q", keys: ["C", "Eb", "G", "Bb"] },
+                  { duration: "q", keys: ["C", "Eb", "F", "A"] },
+                  { duration: "h", keys: ["Bb", "D", "F", "A"] },
+                  { barnote: true },
+                  { duration: "q", keys: ["C", "Eb", "G", "Bb"] },
+                  { duration: "q", keys: ["C", "Eb", "F", "A"] },
+                  { duration: "h", keys: ["Bb", "D", "F", "A"] },
+                  { barnote: true },
+                  { duration: "q", keys: ["C", "Eb", "G", "Bb"] },
+                  { duration: "q", keys: ["C", "Eb", "F", "A"] },
+                  { duration: "h", keys: ["Bb", "D", "F", "A"] }
+                ]}
+              ]
+            });
+          </script>
         </div>
 
         <!--[if lt IE 7]>
@@ -40,11 +126,6 @@
             g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
             s.parentNode.insertBefore(g,s)}(document,'script'));
         </script>
-
-        <!-- build:js scripts/main.js -->
-        <script src="components/jquery/jquery.js"></script>
-        <script src="scripts/main.js"></script>
-        <!-- endbuild -->
 
         <!-- build:js(.tmp) scripts/coffee.js -->
         <script src="scripts/hello.js"></script>
