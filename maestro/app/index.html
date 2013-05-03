@@ -17,6 +17,8 @@
     </head>
     <body ng-app ng-controller="noteCtrl">
         <!-- build:js scripts/main.js -->
+        <script src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
         <script src="scripts/underscore.js"></script>
         <script src="scripts/angular.js"></script>
         <script src="scripts/vexflow.js"></script>
@@ -26,9 +28,15 @@
 
         <div class="container">
             <div class="hero-unit">
-              <h1>Maestro 1.0</h1>
+              <div id="flashcontainer">
+                <div id="flashcontent"></div>
+              </div>
+              <h1 class="pageName">Maestro 1.0</h1>
+              <h2>Live Transcription:</h2>
             </div>
+          <canvas id="live-chord" width="940" height="300"></canvas>
 
+          <div style="display:none;">
           <h2>Simple Chord</h2>
           <p>["C", "E", "G", "Bb"]</p>
           <p>{{ customChord }}</p>
@@ -46,9 +54,7 @@
 
           <h2>Simple List of Notes</h2>
           <canvas id="simple-list-of-notes" width="600" height="120"></canvas>
-          <script type="text/javascript">
-            render_vexflow("simple-list-of-notes", [["C"], ["D"], ["E"], ["F"], ["G"]]);
-          </script>
+          <input type="text" ng-model="customList" placeholder='Sample ["C", "E", "G", "Bb"]' ng-change='redrawList("simple-list-of-notes");'>
 
           <h2>Simple Sequence of Chords</h2>
           <canvas id="simple-sequence-of-chords" width="600" height="120"></canvas>
@@ -79,7 +85,7 @@
           </script>
 
           <h2>Chord Across Treble &amp; Bass Clefs</h2>
-          <canvas id="chord-across-clefs" width="600" height="300"></canvas>
+          <canvas id="chord-across-clefs" width="600" height="600"></canvas>
           <script type="text/javascript">
             render_vexflow("chord-across-clefs", {
               clef: ["treble", "bass"],
@@ -114,37 +120,11 @@
             });
           </script>
         </div>
-
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-        <![endif]-->
-
-        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-            s.parentNode.insertBefore(g,s)}(document,'script'));
-        </script>
-
-        <!-- build:js(.tmp) scripts/coffee.js -->
-        <script src="scripts/hello.js"></script>
-        <!-- endbuild -->
-
-        <!-- build:js scripts/plugins.js -->
-        <script src="components/sass-bootstrap/js/bootstrap-affix.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-alert.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-dropdown.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-tooltip.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-modal.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-transition.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-button.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-popover.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-typeahead.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-carousel.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-scrollspy.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-collapse.js"></script>
-        <script src="components/sass-bootstrap/js/bootstrap-tab.js"></script>
-        <!-- endbuild -->
+          <footer class="footer" id="container">
+            <a href="http://rosa.io/" title="Rosa Labs">Rosa Labs</a>
+            <br>
+            <a href="http://hscott.net/" title="Hunter Scott">Hunter Scott</a>
+          </footer>
+        </div>
 </body>
 </html>

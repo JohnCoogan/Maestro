@@ -143,6 +143,7 @@
     this.clef = options.clef;
     this.scale = options.scale || 1;
 
+    // Clears the canvas every time anything is rendered.
     element.width = element.width;
 
     this.draw_canvas(element, {
