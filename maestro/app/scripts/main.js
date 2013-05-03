@@ -21,6 +21,13 @@ function noteCtrl($scope) {
   $scope.render('simple-list-of-notes', angular.fromJson($scope.customList));
 }
 
+function average (arr)
+{
+  return _.reduce(arr, function(memo, num)
+  {
+    return memo + num;
+  }, 0) / arr.length;
+}
 
 var MAESTRO = MAESTRO || {};
 var noteData = {};
@@ -61,10 +68,10 @@ MAESTRO.MusicApp = new function() {
     noteTime = new Date();
     // console.log(timeSince);
     var audioData = JSON.parse(audioJson);
+    fullNotes.push(audioData.pitch);
     if (audioData.note) {
       previousNote = currentNote;
       currentNote = audioData.name.slice(0,-1) + '/' + audioData.name.slice(-1);
-      fullNotes.push(currentNote);
 
       if (previousNote != currentNote) {
         // console.log("New Note");
@@ -105,17 +112,31 @@ MAESTRO.MusicApp = new function() {
         } else {
           return;
         };
-        render_vexflow('live-chord', noteData);
+        // render_vexflow('live-chord', noteData);
       };
     } else {
       resting = true;
-      fullNotes.push("rest");
     };
-    if (fullNotes.length % 23 == 0) {
+    if (fullNotes.length % 20 == 0) {
+      var lastNotes = _.filter(fullNotes.slice(-20), function(n) { return n != 0; });
+      if (lastNotes.length > 10) {
+        var noteGuess = average(lastNotes);
+        var _local3 = (27.5 * Math.pow(2, (-9 / 12)));
+        var _local4 = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        var _local5 = ((12 * Math.log((noteGuess / _local3))) / Math.LN2);
+        var _local6 = Math.round(_local5);
+        var _local7 = Math.round(_local6 / 12);
+        var _local8 = (_local6 % 12);
+        var _local9 = (_local4[_local8] + "/" + _local7);
+        console.log(_local9);
+        // noteData.notes.push({ duration: "q", keys: [_local9] });
+        // render_vexflow('live-chord', noteData);
+      };
       incTime = (new Date() - startTime) - totalTime;
       totalTime = new Date() - startTime;
       // console.log(incTime);
       // console.log(audioData);
+
       noteAvail = true;
     };
   };
