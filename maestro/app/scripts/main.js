@@ -21,8 +21,10 @@ function noteCtrl($scope) {
   $scope.render('simple-list-of-notes', angular.fromJson($scope.customList));
 }
 
+
 var MAESTRO = MAESTRO || {};
 var noteData = {};
+var fullNotes = [];
 MAESTRO.MusicApp = new function() {
   var LoadedApp = false,
       noteTime = new Date(),
@@ -38,7 +40,15 @@ MAESTRO.MusicApp = new function() {
       quarterUpper = (quarter + half) / 2,
       halfUpper = (half + whole) / 2,
       wholeUpper = whole * 1.5,
-      resting = false;
+      resting = false,
+      threshold = 0,
+      startTime = new Date(),
+      totalTime = 0,
+      incTime = 0,
+      noteAvail = true,
+      currentNote = "b",
+      previousNote = "a",
+      noteLookup = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
   this.init = function() {
     embedFlash();
@@ -46,35 +56,47 @@ MAESTRO.MusicApp = new function() {
     render_vexflow('live-chord', noteData);
   };
 
-  // if (!LoadedApp) {
-  //   $('#flashcontent').css('height', '0px');
-  //   LoadedApp = true;
-  // };
-
   this.newData = function(audioJson) {
+    var timeSince = new Date() - noteTime;
+    noteTime = new Date();
+    // console.log(timeSince);
     var audioData = JSON.parse(audioJson);
     if (audioData.note) {
-      var timeSince = new Date() - noteTime;
-      noteTime = new Date();
-      audioData.vexflow = [audioData.name.slice(0,-1) + '/' + audioData.name.slice(-1)];
-      var lastNote = noteData.notes[noteData.notes.length-1];
-      if (Math.abs(lastNote.keys[0].slice(-1) - audioData.name.slice(-1)) > 1 && !resting) {
-        console.log('Big Jump');
+      previousNote = currentNote;
+      currentNote = audioData.name.slice(0,-1) + '/' + audioData.name.slice(-1);
+      fullNotes.push(currentNote);
+
+      if (previousNote != currentNote) {
+        // console.log("New Note");
+        // return;
       }
-      if (lastNote.keys[0] != audioData.vexflow[0] || resting) {
+
+      audioData.vexflow = [currentNote];
+      var lastNote = noteData.notes[noteData.notes.length-1];
+
+      if (Math.abs(lastNote.keys[0].slice(-1) - audioData.name.slice(-1)) > 2 && !resting) {
+        // console.log('Big Jump');
+        // return;
+      }
+
+      if (lastNote.keys[0] != currentNote || resting) {
         resting = false;
         noteLength = 0;
         if (noteData.notes.length > 10) {
           noteData.notes.shift();
         };
-        noteData.notes.push({ duration: "8", keys: audioData.vexflow });
-        render_vexflow('live-chord', noteData);
+        if (noteAvail) {
+          noteData.notes.push({ duration: "q", keys: [currentNote] });
+          render_vexflow('live-chord', noteData);
+          noteAvail = false;
+        };
       } else {
         noteLength += timeSince;
         var lastNote = noteData.notes[noteData.notes.length-1];
-        if (noteLength < eighthUpper) {
-          lastNote.duration = "8";
-        } else if (noteLength < quarterUpper) {
+        // if (noteLength < eighthUpper) {
+        //   lastNote.duration = "8";
+        // } else 
+        if (eighthUpper < noteLength < quarterUpper) {
           lastNote.duration = "q";
         } else if (noteLength < halfUpper) {
           lastNote.duration = "h";
@@ -87,6 +109,14 @@ MAESTRO.MusicApp = new function() {
       };
     } else {
       resting = true;
+      fullNotes.push("rest");
+    };
+    if (fullNotes.length % 23 == 0) {
+      incTime = (new Date() - startTime) - totalTime;
+      totalTime = new Date() - startTime;
+      // console.log(incTime);
+      // console.log(audioData);
+      noteAvail = true;
     };
   };
 
